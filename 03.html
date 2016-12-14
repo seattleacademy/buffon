@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/x-icon" href="https://production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico" />
+    <link rel="mask-icon" type="" href="https://production-assets.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111" />
+    <title>CodePen - 08winterneedleproblem</title>
+
+
+
+
+    <style>
+        #needle {
+            background: #EEE
+        }
+        
+        #bounded {
+            background: #FF0000;
+        }
+    </style>
+
+
+
+
+
+</head>
+
+<body translate="no">
+
+
+
+    <canvas id="needle" width="600" height="600"> ... </canvas>
+
+    <div id="number"></div>
+    <div id="confidence"></div>
+    <input id="needleNum" value="100000">
+    <button id="reset" onClick="drawNeedles()">go</button>
+
+    <div id="myTable">
+        <table>
+            <tbody id="myBody">
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+
+    <script>
+        var c = document.getElementById("needle");
+        ctx = c.getContext("2d");
+
+        var trials = 0
+
+        drawNeedles();
+
+
+        function drawNeedles() {
+
+            var needleNumber = $("#needleNum").val();
+            console.log(needleNumber);
+
+            ctx.clearRect(0, 0, c.width, c.height);
+
+            var border = 50
+            var line1 = border + Math.floor(1 / 4 * (c.height - 2 * border));
+            var line2 = border + Math.floor(3 / 4 * (c.height - 2 * (border)));
+            var l = (line2 - line1);
+            var totalNumber = 0;
+            ctx.strokeStyle = "#000000";
+            
+            ctx.rect(border, border, c.width - 2 * border, c.height - 2 * border);
+            ctx.moveTo(0, line1);
+            ctx.lineTo(c.width, line1);
+            ctx.stroke();
+            ctx.moveTo(0, line2);
+            ctx.lineTo(c.width, line2);
+            ctx.stroke();
+
+            function Needle(size) {
+                this.xc = border + size / 2 + Math.random() * (c.width - (2 * border + size));
+                this.yc = border + size / 2 + Math.random() * (c.height - (2 * border + size));
+                this.theta = Math.random() * Math.PI * 2;
+                this.x1 = this.xc + Math.cos(this.theta) * size / 2
+                this.y1 = this.yc + Math.sin(this.theta) * size / 2
+                this.x2 = this.x1 - Math.cos(this.theta) * size / 2;
+                this.y2 = this.y1 - Math.sin(this.theta) * size / 2;
+
+                if ((this.y1 < line1 && this.y2 > line1) || (this.y2 < line1 && this.y1 > line1) || (this.y1 < line2 && this.y2 > line2) || (this.y2 < line2 && this.y1 > line2)) {
+                    this.intersect = true;
+                } else {
+                    this.intersect = false;
+                }
+
+            }
+
+            var needles = []
+
+            for (i = 0; i < needleNumber; i++) {
+                var needle = new Needle(l);
+                needles.push(needle);
+            }
+
+            for (i = 0; i < needleNumber; i++) {
+                if (needles[i].intersect == true) {
+                    ctx.strokeStyle = "#FF0000"
+                    totalNumber++
+                } else {
+                    ctx.strokeStyle = "#000000"
+                }
+                ctx.beginPath();
+                ctx.moveTo(needles[i].x1, needles[i].y1);
+                ctx.lineTo(needles[i].x2, needles[i].y2);
+                ctx.stroke();
+            }
+
+            var marginE = 2 * Math.PI * 1.96 * Math.sqrt((1 / Math.PI * (1 - (1 / Math.PI))) / needleNumber);
+
+            $("#confidence").html(marginE);
+            $("#number").html(totalNumber + " out of " + needleNumber + " needles are intersecting, or: " + needleNumber / totalNumber);
+
+            trials++;
+            console.log(trials);
+
+            if (Math.abs(needleNumber / totalNumber - Math.PI) < marginE) {
+                $("#myTable").prepend("<tr id='bounded'><td>Trial #" + trials + "</td><td>: " + needleNumber / totalNumber + "</td></tr>")
+            } else {
+                $("#myTable").prepend("<tr><td>Trial #" + trials + "</td><td>: " + needleNumber / totalNumber + "</td></tr>")
+            }
+        }
+    </script>
+</body>
+</html>
