@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>experiment02</title>
+    <style>
+    #myCanvas {
+        background: #dddddd;
+    }
+    </style>
+</head>
+
+<body>
+    <canvas id="myCanvas"></canvas>
+    <div id="myCounter">...</div>
+    <script>
+    c = document.getElementById('myCanvas');
+    ctx = c.getContext('2d');
+    l = c.height / 2;
+    n = 1000000;
+    console.time();
+    needles = [];
+    for (var i = 0; i < n; i++) {
+        needle = {};
+        needle.x = (Math.random() * (c.width - l)) + l / 2;
+        needle.y = Math.random() * c.height;
+        needle.theta = Math.random() * Math.PI;
+        needle.x1 = needle.x - Math.cos(needle.theta) * l / 2;
+        needle.y1 = needle.y - Math.sin(needle.theta) * l / 2;
+        needle.x2 = needle.x + Math.cos(needle.theta) * l / 2;
+        needle.y2 = needle.y + Math.sin(needle.theta) * l / 2;
+        needle.hit = needle.y1 < 0 || needle.y1 > c.height || needle.y2 < 0 || needle.y2 > c.height;
+        needles.push(needle);
+    }
+    hits = 0;
+    for (var i = 0; i < needles.length; i++) {
+        //console.log("needles",needles[i])
+        ctx.beginPath()
+        ctx.moveTo(needles[i].x1, needles[i].y1);
+        ctx.lineTo(needles[i].x2, needles[i].y2);
+        if (needles[i].hit) {
+            hits++;
+            ctx.strokeStyle = "#FF0000"
+        } else {
+            ctx.strokeStyle = "#000000"
+        }
+        ctx.stroke();
+    }
+    console.timeEnd();
+    console.log('hits', hits)
+    </script>
+</body>
+
+</html>

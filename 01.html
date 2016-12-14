@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>experiment01</title>
+    <style>
+    #myCanvas {
+        background: #dddddd;
+    }
+    </style>
+</head>
+
+<body>
+    <canvas id="myCanvas"></canvas>
+    <div id="myCounter">...</div>
+    <script>
+    c = document.getElementById('myCanvas');
+    ctx = c.getContext('2d');
+    l = c.height / 3;
+    n = 10000;
+    console.time();
+    needles = [];
+    for (var i = 0; i < n; i++) {
+        needle = {};
+        needle.x = Math.random() * c.width;
+        needle.y = Math.random() * c.height;
+        needle.theta = Math.random() * Math.PI;
+        needle.x1 = needle.x - Math.cos(needle.theta) * l / 2;
+        needle.y1 = needle.y - Math.sin(needle.theta) * l / 2;
+        needle.x2 = needle.x + Math.cos(needle.theta) * l / 2;
+        needle.y2 = needle.y + Math.sin(needle.theta) * l / 2;
+        //needles.push(needle);
+    }
+    console.timeEnd();
+    </script>
+</body>
+
+</html>
