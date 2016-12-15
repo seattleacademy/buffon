@@ -22,7 +22,7 @@
     needles = [];
     for (var i = 0; i < n; i++) {
         needle = {};
-        needle.x = (Math.random() * (c.width - l)) + l / 2;
+        needle.x = Math.random() * (c.width - l) + l / 2;
         needle.y = Math.random() * c.height;
         needle.theta = Math.random() * Math.PI;
         needle.x1 = needle.x - Math.cos(needle.theta) * l / 2;
@@ -34,7 +34,6 @@
     }
     hits = 0;
     for (var i = 0; i < needles.length; i++) {
-        //console.log("needles",needles[i])
         ctx.beginPath()
         ctx.moveTo(needles[i].x1, needles[i].y1);
         ctx.lineTo(needles[i].x2, needles[i].y2);
@@ -47,7 +46,8 @@
         ctx.stroke();
     }
     console.timeEnd();
-    console.log('hits', hits)
+    mypi = 1 / (hits / n);
+    console.log('hits', hits, "mypi", mypi)
     </script>
 </body>
 
